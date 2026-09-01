@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # ===================================
+  # PostgreSQL Database
+  # ===================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: order_inventory_db
+    environment:
+      POSTGRES_DB: order_inventory
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - order-inventory-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d order_inventory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===================================
+  # Redis Cache
+  # ===================================
+  redis:
+    image: redis:7-alpine
+    container_name: order_inventory_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - order-inventory-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  # ===================================
+  # Spring Boot Application
+  # ===================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order_inventory_app
+    ports:
+      - "8080:8080"
+    environment:
+      # PostgreSQL Configuration
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: order_inventory
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      # Redis Configuration
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Server Configuration
+      SERVER_PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - order-inventory-network
+    restart: unless-stopped
+
+# ===================================
+# Networks
+# ===================================
+networks:
+  order-inventory-network:
+    driver: bridge
+
+# ===================================
+# Volumes
+# ===================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

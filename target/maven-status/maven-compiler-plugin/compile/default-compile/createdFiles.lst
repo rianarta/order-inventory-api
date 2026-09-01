@@ -1,0 +1,7 @@
+com\portfolio\order\config\CacheConfig.class
+com\portfolio\order\controller\ProductController.class
+com\portfolio\order\model\Product.class
+com\portfolio\order\OrderInventoryApplication.class
+com\portfolio\order\repository\ProductRepository.class
+com\portfolio\order\model\Product$ProductBuilder.class
+com\portfolio\order\service\ProductService.class
