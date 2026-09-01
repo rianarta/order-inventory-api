@@ -1,0 +1,47 @@
+# Render Blueprint Specification
+# https://render.com/docs/blueprint-spec
+
+services:
+  # ===================================
+  # Spring Boot Application
+  # ===================================
+  - type: web
+    name: order-inventory-system
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 10000
+      # PostgreSQL - Create database on Render first
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # Redis Configuration
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        value: 6379
+      - key: CACHE_TYPE
+        value: redis
+
+  # ===================================
+  # Redis Service (Optional - if you want managed Redis)
+  # ===================================
+  # Uncomment if you want Render to manage Redis
+  # - type: redis
+  #   name: order-inventory-redis
+  #   ipAllowList: []
+  #   plan: free
+  #   region: singapore
