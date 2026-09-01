@@ -6,12 +6,12 @@ spring:
     name: order-inventory-system
   
   # ===================================
-  # Neon PostgreSQL Configuration (Production)
+  # PostgreSQL Configuration (Environment Variables)
   # ===================================
   datasource:
-    url: jdbc:postgresql://neondb_owner:npg_m7bQpdck4qya@ep-silent-sunset-a5zv4p29-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-    username: neondb_owner
-    password: npg_m7bQpdck4qya
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:order_inventory}?sslmode=${DB_SSL_MODE:disable}&channel_binding=${DB_CHANNEL_BINDING:prefer}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
@@ -19,16 +19,6 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-  
-  # ===================================
-  # Local PostgreSQL Configuration (Debug/Development)
-  # Comment out when using Neon
-  # ===================================
-  # datasource:
-  #   url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:order_inventory}
-  #   username: ${DB_USERNAME:postgres}
-  #   password: ${DB_PASSWORD:admin}
-  #   driver-class-name: org.postgresql.Driver
   
   # JPA Configuration
   jpa:
@@ -49,7 +39,7 @@ spring:
   
   # Cache Configuration
   cache:
-    type: ${CACHE_TYPE:simple}  # Use 'redis' for production with Docker, 'simple' for local dev
+    type: ${CACHE_TYPE:simple}  # Use 'redis' for production, 'simple' for local dev
 
 # Logging Configuration
 logging:
