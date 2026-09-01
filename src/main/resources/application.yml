@@ -5,12 +5,30 @@ spring:
   application:
     name: order-inventory-system
   
-  # PostgreSQL Configuration
+  # ===================================
+  # Neon PostgreSQL Configuration (Production)
+  # ===================================
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:order_inventory}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:admin}
+    url: jdbc:postgresql://neondb_owner:npg_m7bQpdck4qya@ep-silent-sunset-a5zv4p29-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_m7bQpdck4qya
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # ===================================
+  # Local PostgreSQL Configuration (Debug/Development)
+  # Comment out when using Neon
+  # ===================================
+  # datasource:
+  #   url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:order_inventory}
+  #   username: ${DB_USERNAME:postgres}
+  #   password: ${DB_PASSWORD:admin}
+  #   driver-class-name: org.postgresql.Driver
   
   # JPA Configuration
   jpa:
@@ -22,7 +40,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   
-  # Redis Configuration
+  # Redis Configuration (Optional - for caching)
   data:
     redis:
       host: ${REDIS_HOST:localhost}

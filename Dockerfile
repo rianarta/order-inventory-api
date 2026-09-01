@@ -31,12 +31,12 @@ RUN chown -R spring:spring /app
 
 USER spring:spring
 
-# Expose port (10000 for Render)
-EXPOSE 10000
+# Expose port (8080 for Railway)
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:10000/actuator/health || exit 1
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "-Xms256m", "-Xmx512m", "app.jar"]
