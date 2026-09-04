@@ -79,4 +79,16 @@ public class ProductService {
         product.setStatus(ProductStatus.INACTIVE);
         productRepository.save(product);
     }
+
+    /**
+     * Search products by name (case-insensitive).
+     *
+     * @param query The search query
+     * @return List of products matching the query
+     */
+    @Cacheable(value = "products", key = "'search:' + #query")
+    public List<Product> searchByName(String query) {
+        log.info("Searching products with name containing: {}", query);
+        return productRepository.findByNameContainingIgnoreCase(query);
+    }
 }
