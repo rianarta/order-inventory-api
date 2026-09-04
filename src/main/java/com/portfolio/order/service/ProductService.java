@@ -1,6 +1,7 @@
 package com.portfolio.order.service;
 
 import com.portfolio.order.model.Product;
+import com.portfolio.order.model.ProductStatus;
 import com.portfolio.order.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +23,16 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     /**
-     * Get all products from the database.
+     * Get all ACTIVE products from the database.
+     * Soft-deleted (INACTIVE) products are excluded from the result.
      * Results are cached in the "products" cache.
      *
-     * @return List of all products
+     * @return List of all active products
      */
     @Cacheable(value = "products")
     public List<Product> getAllProducts() {
-        log.info("Fetching all products from database...");
-        return productRepository.findAll();
+        log.info("Fetching all active products from database...");
+        return productRepository.findByStatus(ProductStatus.ACTIVE);
     }
 
     /**
@@ -59,14 +61,22 @@ public class ProductService {
     }
 
     /**
-     * Delete a product by ID.
-     * Clears the "products" cache after successful deletion.
+     * Soft-delete a product by ID.
+     * Instead of removing the row from the database, the product's
+     * status is set to INACTIVE. This preserves historical data and
+     * prevents auto-generated IDs from being "wasted" in a way that's
+     * visible to the user (the row itself still exists, it's just
+     * excluded from normal queries via {@link #getAllProducts()}).
+     * Clears the "products" cache after the status change.
      *
-     * @param id The product ID to delete
+     * @param id The product ID to soft-delete
      */
     @CacheEvict(value = "products", allEntries = true)
     public void deleteProduct(Long id) {
-        log.info("Deleting product with ID: {}", id);
-        productRepository.deleteById(id);
+        log.info("Soft-deleting product with ID: {} (status -> INACTIVE)", id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        product.setStatus(ProductStatus.INACTIVE);
+        productRepository.save(product);
     }
 }
