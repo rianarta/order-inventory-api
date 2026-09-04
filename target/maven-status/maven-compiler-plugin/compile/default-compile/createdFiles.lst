@@ -4,4 +4,5 @@ com\portfolio\order\model\Product.class
 com\portfolio\order\OrderInventoryApplication.class
 com\portfolio\order\repository\ProductRepository.class
 com\portfolio\order\model\Product$ProductBuilder.class
+com\portfolio\order\model\ProductStatus.class
 com\portfolio\order\service\ProductService.class
