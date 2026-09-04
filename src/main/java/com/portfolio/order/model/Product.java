@@ -36,4 +36,8 @@ public class Product implements Serializable {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private ProductStatus status = ProductStatus.ACTIVE;
+
+    private String imageUrl;
+
+    private String description;
 }
