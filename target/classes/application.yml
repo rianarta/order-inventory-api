@@ -59,6 +59,6 @@ management:
       show-details: when_authorized
   health:
     redis:
-      enabled: true
+      enabled: ${REDIS_HEALTH_CHECK:false} # Set true jika Redis sudah pasti menyala
     db:
       enabled: true
