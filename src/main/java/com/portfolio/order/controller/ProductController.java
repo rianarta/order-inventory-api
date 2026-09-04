@@ -80,6 +80,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         log.info("POST /api/products - Creating new product: {}", product.getName());
+        if (product.getCategory() == null || product.getCategory().isEmpty()) {
+            product.setCategory("all");
+        }
         Product savedProduct = productService.saveProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
@@ -183,6 +186,7 @@ public class ProductController {
             existingProduct.setStock(product.getStock());
             existingProduct.setDescription(product.getDescription());
             existingProduct.setImageUrl(product.getImageUrl());
+            existingProduct.setCategory(product.getCategory());
             Product updatedProduct = productService.saveProduct(existingProduct);
             return ResponseEntity.ok(updatedProduct);
         } catch (RuntimeException e) {

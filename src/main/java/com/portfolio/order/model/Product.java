@@ -40,4 +40,6 @@ public class Product implements Serializable {
     private String imageUrl;
 
     private String description;
+
+    private String category;
 }
